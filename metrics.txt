@@ -1,0 +1,2 @@
+
+ BM_Validation_Loss_Accuracy = [0.279205322265625, 0.9026666879653931], OPT_Validation_Loss_Accuracy = [0.24821272492408752, 0.9075833559036255], BM_Actual_Label = 2, BM_Predicted_Label = 2, OPT_Actual_Label = 1, OPT_Predicted_Label = 1.
