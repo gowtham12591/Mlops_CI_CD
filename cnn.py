@@ -146,7 +146,7 @@ print(basic_model.summary())
 
 # Model_Fitting
 # Batch size and epochs can be varied based on the need/performance
-tr_history = basic_model.fit(x=X_train_, y=y_train_, batch_size=64, epochs=5, validation_data=(X_val, y_val))  
+tr_history = basic_model.fit(x=X_train_, y=y_train_, batch_size=64, epochs=3, validation_data=(X_val, y_val))  
 
 # Checking final validation loss and accuracy
 base_val_acc = basic_model.evaluate(X_val, y_val)
@@ -178,60 +178,6 @@ basic_model.save('model/basic_cnn.h5')
 basic_model.save_weights('model/basic_cnn_weights.h5')
 
 
-#####---------------------------------
-# Adding few more layers to robust CNN model (Vanilla CNN + Pooling + Dropout)
-
-modified_cnn = Sequential()
-modified_cnn.add(Conv2D(filters=28, kernel_size=3, activation="relu", input_shape=(28, 28, 1)))
-modified_cnn.add(Conv2D(filters=32, kernel_size=3, activation="relu"))
-modified_cnn.add(Conv2D(filters=64, kernel_size=3, activation="relu"))
-modified_cnn.add(Conv2D(filters=32, kernel_size=3, activation="relu"))
-
-# Add a MaxPooling Layer of size 2X2 
-modified_cnn.add(MaxPooling2D(pool_size=(2, 2)))
-
-# Apply Dropout with 0.2 probability 
-modified_cnn.add(Dropout(rate=0.2))
-
-modified_cnn.add(Flatten())
-modified_cnn.add(Dense(64, activation="relu"))
-modified_cnn.add(Dense(128, activation="relu"))
-modified_cnn.add(Dense(10, activation="softmax"))
-
-# Model compilation
-modified_cnn.compile(loss="categorical_crossentropy", metrics=["accuracy"], optimizer="adam")
-# Model Summary
-print(modified_cnn.summary())
-
-# Model_Fitting
-# Batch size and epochs can be varied based on the need/performance
-tr_history_mod = modified_cnn.fit(x=X_train_, y=y_train_, batch_size=64, epochs=5, validation_data=(X_val, y_val))  
-
-# Checking final validation loss and accuracy
-opt_val_accuracy = modified_cnn.evaluate(X_val, y_val)
-print(modified_cnn.evaluate(X_val, y_val))
-
-## Accuracy and Loss plots
-accuracy      = tr_history_mod.history['accuracy']                      # Extracting metrics like accuracy & loss from training history
-val_accuracy  = tr_history_mod.history['val_accuracy']
-loss          = tr_history_mod.history['loss']
-val_loss      = tr_history_mod.history['val_loss']
-epochs        = range(len(accuracy))                                # Get number of epochs
-# Train Plot
-plt.plot  (epochs, accuracy, label = 'training accuracy')
-plt.plot  (epochs, val_accuracy, label = 'validation accuracy')
-plt.title ('Training and validation accuracy')
-plt.legend(loc = 'lower right')
-plt.figure()
-# Validation Plot
-plt.plot  (epochs, loss, label = 'training loss')
-plt.plot  (epochs, val_loss, label = 'validation loss')
-plt.legend(loc = 'upper right')
-plt.title ('Training and validation loss')
-
-# Saving the model
-modified_cnn.save('model/modified_cnn.h5')
-modified_cnn.save_weights('model/modified_cnn_weights.h5')
 
 ###-----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -239,9 +185,7 @@ modified_cnn.save_weights('model/modified_cnn_weights.h5')
 # Basic model
 basic_cnn = load_model('model/basic_cnn.h5')
 basic_cnn.load_weights('model/basic_cnn_weights.h5')
-# Optimized model
-modified_cnn = load_model('model/modified_cnn.h5')
-modified_cnn.load_weights('model/modified_cnn_weights.h5')
+
 
 ###-----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -264,27 +208,8 @@ for i in y_pred:
         if k == y_pred.max():
             print('Predicted_Label:', labels[j])
 
-#####---------------------------------
-
-# Predicting and vizualizing the test image with optimized model
-n = np.random.randint(1, X_test.shape[0])                       # Getting the random value from the entire test imges
-
-plt.title(y_test[n])
-plt.imshow(X_test[n])
-y_pred = modified_cnn.predict(X_test[n].reshape(1,28,28,1))
-print("Softmax Outputs:", y_pred)
-print(y_pred.sum())
-opt_actual_label = y_test[n]
-opt_pred_label = np.argmax(y_pred)
-
-# Convert the predicted probabilities to labels
-labels = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']   ## This is the order in which the dataset is read
-for i in y_pred:
-    for j, k in enumerate(i):
-        if k == y_pred.max():
-            print('Predicted_Label:', labels[j])
 
 
 # Write metrics to file
 with open('metrics.txt', 'w') as outfile:
-    outfile.write(f'\n BM_Validation_Loss_Accuracy = {base_val_acc}, OPT_Validation_Loss_Accuracy = {opt_val_accuracy}, BM_Actual_Label = {bm_actual_label}, BM_Predicted_Label = {bm_pred_label}, OPT_Actual_Label = {opt_actual_label}, OPT_Predicted_Label = {opt_pred_label}.')
+    outfile.write(f'\n BM_Validation_Loss_Accuracy = {base_val_acc}, BM_Actual_Label = {bm_actual_label}, BM_Predicted_Label = {bm_pred_label}.')
