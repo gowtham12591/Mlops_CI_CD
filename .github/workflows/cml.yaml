@@ -1,10 +1,11 @@
 name: mlops-exaple-cnn
 on: [push]
-permissions: read-all|write-all
+
 jobs:
   run:
     runs-on: [ubuntu-latest]
     container: docker://dvcorg/cml-py3:latest
+    permissions: write-all
     steps:
       - uses: actions/checkout@v3
       # may need to setup NodeJS & Python3 on e.g. self-hosted
