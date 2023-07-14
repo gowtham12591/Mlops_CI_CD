@@ -21,6 +21,6 @@ jobs:
           echo "\n## Model Performance" >> report.md
           echo "Model performance metrics are on the plot below." >> report.md
           
-          cml-publish Train-Val_ACC_curve.png --md >> report.md
+          cml-publish Train-Val_ACC_Curve.png --md >> report.md
           
           cml-send-comment report.md
