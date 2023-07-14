@@ -1,5 +1,6 @@
 name: mlops-exaple-cnn
 on: [push]
+permissions: read-all|write-all
 jobs:
   run:
     runs-on: [ubuntu-latest]
@@ -21,6 +22,7 @@ jobs:
           python cnn.py
           
       - name: Write CML report
+
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
